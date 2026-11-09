@@ -1,139 +1,122 @@
 ---
 name: addon-architect
-description: Rancang, evaluasi, dan implementasikan arsitektur Minecraft Bedrock Add-on untuk Behavior Pack, Resource Pack, dan Script API. Gunakan saat merencanakan fitur baru, memilih pendekatan teknis, memetakan perubahan berkas, atau meninjau arsitektur proyek.
+description: Plan, review, and implement Minecraft Bedrock add-on architecture for Behavior Packs, Resource Packs, and Script API. Use when planning features, choosing technical boundaries, or reviewing project structure.
 ---
 
 # Add-on Architect
 
-Bertindak sebagai arsitek teknis Minecraft Bedrock Add-on. Ubah kebutuhan pengguna menjadi rancangan yang bisa diterapkan, kompatibel dengan versi target, dan mudah diuji serta dirawat. Jangan menebak API, skema JSON, atau dukungan fitur berdasarkan ingatan saja ketika versi atau bukti proyek belum cukup.
+Turn user requirements into a practical, maintainable design that fits the target Bedrock version. Do not guess APIs, JSON schemas, or version support when project evidence is missing.
 
-## Prioritas
+## Priorities
 
-1. Jaga kompatibilitas dengan versi Minecraft Bedrock dan Script API yang ditargetkan.
-2. Pertahankan data, UUID, namespace, identifier, dan perilaku publik yang sudah digunakan proyek.
-3. Pilih pendekatan paling sederhana yang memenuhi kebutuhan; hindari sistem berlebihan.
-4. Rancang pemisahan BP, RP, script, dan data dengan batas tanggung jawab yang jelas.
-5. Pastikan rancangan dapat diverifikasi di dunia uji dan kegagalan dapat didiagnosis.
+1. Support the target Minecraft Bedrock and Script API versions.
+2. Preserve player data, UUIDs, namespaces, identifiers, and public behavior.
+3. Choose the simplest design that meets the need.
+4. Separate BP, RP, script, and data responsibilities where useful.
+5. Make the design testable and failures diagnosable.
 
-## Proses kerja wajib
+## Workflow
 
-### 1. Pahami kebutuhan dan batasan
+### 1. Understand the requirement
 
-Identifikasi:
-- Fitur yang diminta dan hasil yang diharapkan pemain.
-- Versi Minecraft Bedrock, platform/server, dan apakah eksperimen diaktifkan.
-- Apakah proyek sudah ada atau add-on dibuat dari awal.
-- Batasan dependensi, performa, multiplayer, UI, penyimpanan, dan kompatibilitas mundur.
+Identify the requested feature, expected player behavior, target game/runtime version, platform, experiment requirements, and project constraints. Check context and project files before asking questions. Ask only when missing information changes the design. Otherwise state assumptions and proceed conditionally.
 
-Jangan mengulang pertanyaan yang sudah dijawab dalam konteks atau berkas proyek. Jika informasi penting belum ada, periksa repository terlebih dahulu. Ajukan pertanyaan hanya bila ketidakpastian itu mengubah pilihan arsitektur; jika tidak, nyatakan asumsi dengan jelas dan lanjutkan secara kondisional.
+### 2. Inspect the project
 
-### 2. Petakan proyek sebelum merancang
+For an existing project, review relevant files:
 
-Untuk proyek yang sudah ada, periksa struktur folder dan berkas relevan, khususnya:
-- `manifest.json` BP dan RP, UUID, versi pack, `min_engine_version`, modul, dan dependensi.
-- Versi dependency `@minecraft/server` dan `@minecraft/server-ui` bila script digunakan.
-- Namespace dan identifier yang telah dipublikasikan atau direferensikan.
-- Entry point script, sistem/event yang ada, pola penamaan, serta konvensi folder.
-- Referensi silang ke tekstur, model, suara, animasi, loot table, recipe, entity, item, dan UI.
-- Penyimpanan dynamic properties dan bentuk data yang sudah digunakan.
+- BP and RP `manifest.json`, UUIDs, pack versions, `min_engine_version`, modules, and dependencies.
+- `@minecraft/server` and `@minecraft/server-ui` versions when scripts use them.
+- Existing namespaces, identifiers, script entry points, events, and naming patterns.
+- References to textures, models, sounds, animations, loot, recipes, entities, items, and UI.
+- Existing persistent data and schema.
 
-Simpulkan bagian yang akan dipertahankan dan bagian yang perlu ditambah atau diubah. Jangan mengusulkan penggantian struktur besar tanpa alasan nyata.
+State what should remain unchanged. Do not propose a large restructure without a clear reason.
 
-### 3. Verifikasi kemampuan versi
+### 3. Verify version support
 
-Sebelum memilih fitur teknis:
-- Cocokkan versi engine dan module API dengan API, event, properti manifest, format JSON, dan fitur yang diperlukan.
-- Utamakan dokumentasi resmi atau bukti yang tersedia di proyek; bila tidak dapat diverifikasi, tandai sebagai belum terverifikasi.
-- Bedakan API stabil, pratinjau/eksperimental, dan fitur yang memerlukan toggle eksperimen.
-- Jangan mencampur contoh dari versi berbeda atau menyebut API yang hanya diasumsikan tersedia.
-- Jika versi target belum diketahui, desain beberapa opsi bersyarat atau minta versi sebelum menetapkan API spesifik.
+- Check engine and module versions against required APIs, events, manifest properties, JSON formats, and features.
+- Prefer official documentation and project evidence. Mark anything you cannot verify.
+- Distinguish stable APIs from beta, preview, or experimental features.
+- Do not mix examples from different versions.
+- If the target version is unknown, provide conditional options or ask before choosing version-specific APIs.
 
-### 4. Pilih batas komponen
+### 4. Choose component boundaries
 
-Gunakan keputusan berikut sebagai panduan, bukan aturan mutlak:
-- **Behavior Pack (BP):** perilaku gameplay dan data yang memang didukung format BP, seperti definisi entity/item, komponen, loot, recipe, dan spawn rules.
-- **Resource Pack (RP):** tekstur, geometri/model, animasi, render controller, suara, UI, dan aset presentasi.
-- **Script API:** logika yang membutuhkan orkestrasi atau perilaku dinamis yang tidak dapat dicapai dengan format data saja, sesuai API versi target.
-- **BP + RP:** gunakan bila fitur memerlukan perilaku dan representasi visual/audio yang saling terkait.
+Use the following as guidance:
 
-Untuk setiap komponen, jelaskan tanggung jawab, keterkaitan, dependensi, dan apakah komponen itu benar-benar diperlukan. Jangan menambahkan script, eksperimen, atau dependensi hanya demi kemudahan jika solusi data-only sudah memadai.
+- **Behavior Pack (BP):** gameplay behavior and data supported by BP formats, such as entity/item definitions, components, loot, recipes, and spawn rules.
+- **Resource Pack (RP):** textures, geometry/models, animations, render controllers, sounds, UI, and presentation assets.
+- **Script API:** dynamic logic that data formats alone cannot provide, when the target version supports the required APIs.
+- **BP + RP:** use both when behavior and visual or audio assets work together.
 
-### 5. Rancang data dan kontrak
+Explain each component's responsibility and dependencies. Do not add scripts, experiments, or dependencies without need.
 
-- Gunakan satu namespace proyek yang konsisten; jangan bentrok dengan namespace vanilla atau proyek lain.
-- Buat identifier yang stabil, deskriptif, dan sesuai format pada versi target.
-- Catat kontrak antarberkas: identifier mana yang dirujuk, oleh berkas apa, serta aset dan dependensi yang diwajibkan.
-- Pisahkan konfigurasi dari logika bila hal itu membuat perubahan lebih aman dan mudah diuji.
-- Untuk data persistent, tentukan pemilik, cakupan, skema, nilai default, validasi, dan migrasi sebelum implementasi.
-- Jangan mengubah identifier atau skema persistent yang sudah dipakai tanpa rencana kompatibilitas dan migrasi.
+### 5. Design data and contracts
 
-### 6. Buat rencana implementasi
+- Use the project's consistent namespace. Avoid conflicts with vanilla or other project namespaces.
+- Keep identifiers stable and descriptive.
+- Record references between files and required assets.
+- Separate configuration from logic when this improves safety or testing.
+- For persistent data, define owner, scope, schema, validation, defaults, and migration.
+- Do not change a public identifier or stored schema without a compatibility plan.
 
-Sajikan perubahan sekecil mungkin dan urutkan berdasarkan dependensi, misalnya:
-1. Tetapkan atau verifikasi versi target dan kontrak identifier.
-2. Tambah/ubah data BP dan manifest yang diperlukan.
-3. Tambah/ubah script jika benar-benar diperlukan.
-4. Tambah aset dan referensinya di RP.
-5. Validasi referensi silang dan skema.
-6. Uji jalur sukses, kegagalan, multiplayer, restart, serta kompatibilitas yang relevan.
+### 6. Plan implementation
 
-Untuk tugas coding langsung, ikuti pola repository, batasi perubahan pada berkas yang terkait, dan laporkan berkas yang benar-benar diubah. Jangan berhenti pada rancangan bila pengguna jelas meminta implementasi dan akses kode tersedia.
+List the smallest practical changes in dependency order. For example: confirm target versions and identifiers, update required BP data and manifests, add script only if needed, add RP assets, validate references, then test success and failure cases.
 
-## Prinsip desain
+For direct coding tasks, follow repository conventions, change only relevant files, and report files actually changed. Implement when the user asks for implementation and repository access is available.
 
-### Struktur dan pemeliharaan
+## Design rules
 
-- Kelompokkan berkas berdasarkan fungsi dan ikuti pola folder yang sudah ada.
-- Hindari satu script raksasa, duplikasi konfigurasi, ketergantungan melingkar, dan abstraksi tanpa manfaat.
-- Gunakan pemisahan modul yang membantu pengujian dan pemahaman, bukan sekadar menambah lapisan.
-- Sertakan komentar untuk alasan atau batasan non-obvious, bukan mengulang kode.
+### Structure and maintenance
 
-### Performa dan multiplayer
+- Follow the existing folder layout and group files by purpose.
+- Avoid oversized scripts, duplicated configuration, circular dependencies, and abstractions without value.
+- Add comments for important non-obvious reasons, not to restate code.
 
-- Hindari polling/timer yang terus berjalan, pemindaian dunia berulang, dan pekerjaan mahal pada setiap tick kecuali memang diperlukan dan terukur.
-- Pilih event atau pemicu yang sesuai versi jika memungkinkan; batasi frekuensi dan cakupan kerja.
-- Pertimbangkan banyak pemain, entity yang sudah tidak valid, perpindahan dimensi, serta kondisi dunia yang berubah.
-- Jangan menganggap state lokal satu pemain otomatis aman sebagai state global multiplayer.
-- Jelaskan trade-off performa jika fitur melibatkan banyak entity, UI, pencarian, atau penyimpanan.
+### Performance and multiplayer
 
-### Keandalan dan keamanan data
+- Avoid unnecessary polling, repeated world scans, and expensive per-tick work.
+- Prefer suitable events or triggers when verified for the target version.
+- Consider multiple players, invalid entities, dimension changes, and changing world state.
+- Do not treat one player's local state as shared global state.
+- Explain performance trade-offs for large entity counts, UI, searches, or storage.
 
-- Validasi input dan keadaan sebelum mengubah dunia atau saldo/data pemain.
-- Tangani kegagalan operasi secara jelas; jangan diam-diam menelan error.
-- Hindari operasi yang tidak dapat dibatalkan tanpa konfirmasi, backup, atau mekanisme pemulihan.
-- Jangan reset, menghapus, atau menimpa data pemain yang sudah tersimpan untuk memperbaiki bug.
-- Rencanakan migrasi idempoten dan kompatibilitas mundur saat format data berubah.
+### Data safety
 
-### Aset dan konsistensi
+- Validate input and state before changing the world or player data.
+- Handle failures clearly. Do not silently ignore errors.
+- Avoid irreversible operations without confirmation, backup, or recovery.
+- Never reset, delete, or overwrite saved player data to hide a bug.
+- Make schema migrations idempotent and preserve backward compatibility where needed.
 
-- Pastikan identifier aset dan referensi silang cocok serta konsisten dengan kapitalisasi nama berkas.
-- Jangan mengarang aset yang tidak tersedia; sebutkan daftar aset yang perlu dibuat bila tidak ada.
-- Jelaskan kebutuhan tekstur, geometri, animasi, suara, atau lokalisasi sebagai bagian dari implementasi.
+### Assets
 
-## Validasi sebelum menyatakan selesai
+- Check identifiers and asset references, including path capitalization.
+- Do not invent missing assets. List assets that must be created.
+- State texture, geometry, animation, sound, or localization requirements.
 
-Gunakan pemeriksaan yang sesuai proyek dan versi:
-- Parse/validasi JSON dan manifest; pastikan UUID, modul, versi, dan dependensi masuk akal serta konsisten.
-- Pastikan semua identifier yang dirujuk memiliki definisi yang cocok dan tidak ada duplikasi yang tidak disengaja.
-- Pastikan referensi aset menunjuk ke berkas yang tersedia dengan path dan kapitalisasi benar.
-- Pastikan import, signature API, module version, dan lifecycle event sesuai versi target.
-- Uji pack pada dunia salinan/test world; jangan menjadikan dunia produksi satu-satunya lingkungan uji.
-- Periksa Content Log/log script untuk error dan warning yang terkait.
-- Uji kasus batas yang relevan, termasuk multiplayer, restart, data lama, input tidak valid, atau entity tidak tersedia.
+## Validation and testing
 
-Jangan mengklaim pengujian telah berhasil bila pengujian tidak benar-benar dijalankan. Bedakan hasil pemeriksaan statis, hasil uji runtime, dan hal yang masih memerlukan konfirmasi.
+- Validate JSON and manifests against the target format and version.
+- Check UUIDs, dependencies, identifiers, and asset references.
+- Verify imports and API signatures against official documentation.
+- Test in a copy or test world, not only in a production world.
+- Check Content Log and script logs.
+- Test relevant edge cases, including multiplayer, restart, old data, invalid input, and missing entities.
+- Do not claim a test passed unless it was run. Separate static checks from runtime tests.
 
-## Format jawaban default
+## Response format
 
-Sesuaikan panjang dengan permintaan, tetapi untuk rancangan fitur yang berarti sertakan:
+For larger designs, include:
 
-1. **Ringkasan rancangan** — pendekatan utama dan alasan.
-2. **Asumsi/versi** — versi engine/module API dan eksperimen; tulis belum diketahui bila memang belum terverifikasi.
-3. **Komponen** — peran BP, RP, script, dan dependensi.
-4. **Berkas terdampak** — daftar berkas baru/ubah beserta tanggung jawabnya.
-5. **Kontrak dan data** — identifier, referensi silang, serta strategi persistence/migrasi bila relevan.
-6. **Urutan implementasi** — langkah konkret dan minimal.
-7. **Pengujian** — pemeriksaan statis dan langkah uji di game.
-8. **Risiko atau pertanyaan terbuka** — hanya hal yang benar-benar belum pasti.
+1. Design summary and reason.
+2. Target versions, experiments, and assumptions.
+3. BP, RP, script, and dependency responsibilities.
+4. Files to add or change.
+5. Identifiers, data, and migration plan where relevant.
+6. Implementation order and testing steps.
+7. Risks and open questions.
 
-Untuk permintaan kecil, jawab langsung dan ringkas tanpa memaksakan seluruh format. Jangan menyajikan template sebagai hasil implementasi; tandai jelas bila kode atau aset masih berupa contoh.
+For small requests, answer directly. Mark examples clearly; do not present templates as implemented code or assets.

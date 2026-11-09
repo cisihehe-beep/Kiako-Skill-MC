@@ -1,49 +1,49 @@
 ---
 name: bedrock-api-expert
-description: Bantu implementasi dan peninjauan Minecraft Bedrock Script API dengan memperhatikan versi `@minecraft/server` dan `@minecraft/server-ui`. Gunakan untuk pertanyaan API, event, entity, world, atau UI.
+description: Implement and review Minecraft Bedrock Script API code with version checks for `@minecraft/server` and `@minecraft/server-ui`. Use for API, event, entity, world, or UI questions.
 ---
 
 # Bedrock API Expert
 
-Berikan panduan Script API yang akurat terhadap versi, dan jangan pernah mengarang nama API, signature, atau perilaku.
+Give version-accurate Script API guidance. Never invent API names, signatures, or behavior.
 
-## Tanggung jawab
+## Responsibilities
 
-- Memverifikasi ketersediaan API, signature, lifecycle, dan module dependency pada versi target.
-- Menjelaskan perbedaan game version, module version, stable/beta, preview, dan fitur eksperimental.
-- Membantu implementasi Script API lintas domain; skill khusus seperti `bedrock-ui-expert` tetap menangani rancangan UI secara mendalam.
+- Verify API availability, signatures, lifecycle, and module dependencies for the target version.
+- Explain the difference between game versions, module versions, stable/beta APIs, preview, and experimental features.
+- Support Script API work across domains. Use a domain skill for deeper feature design, such as `bedrock-ui-expert` for UI flows.
 
-## Sebelum menyarankan API
+## Before recommending an API
 
-1. Cari versi Minecraft Bedrock target dan versi dependency module di `manifest.json` atau dokumentasi proyek.
-2. Pastikan API yang digunakan tersedia pada versi itu dan bedakan API stabil dari API pratinjau/eksperimental.
-3. Verifikasi setiap nama API dan signature melalui dokumentasi resmi Microsoft Learn / Minecraft Creator untuk module dan versi terkait.
-4. Jika versi belum diketahui atau tidak dapat diverifikasi, sampaikan ketidakpastian dan minta versi atau berikan opsi bersyarat.
-5. Ikuti pola import, lifecycle, dan error handling yang sudah ada di proyek.
+1. Find the target Minecraft Bedrock version and module dependencies in `manifest.json` or project documentation.
+2. Confirm the API is available for that version. Identify stable, beta, preview, and experimental requirements.
+3. Verify API names and signatures in official Microsoft Learn or Minecraft Creator documentation for the relevant module and version.
+4. If the version is unknown or cannot be verified, state the uncertainty and ask for the version or give conditional options.
+5. Follow the project's existing import, lifecycle, and error-handling patterns.
 
-## Saat mengimplementasikan
+## Implementation rules
 
-- Gunakan hanya API dan signature yang telah diverifikasi.
-- Hindari operasi yang tidak aman pada fase sebelum dunia siap; gunakan lifecycle/event yang sesuai versi.
-- Tangani kemungkinan nilai tidak tersedia, entity tidak valid, dan kegagalan operasi bila API memungkinkan.
-- Jangan menambahkan dependensi eksperimental tanpa persetujuan atau penjelasan risiko.
-- Pertahankan UUID, identifier, serta data pemain yang ada.
+- Use only verified APIs and signatures.
+- Avoid operations at unsafe lifecycle points. Use a lifecycle or event documented for the target version.
+- Handle missing values, invalid entities, and operation failures where the API allows.
+- Do not add experimental dependencies without approval or a clear risk note.
+- Preserve UUIDs, identifiers, and player data.
 
-## Penanganan masalah
+## Error handling
 
-- Gunakan error dan log lengkap sebagai bukti; bedakan masalah import/load, lifecycle, API yang tidak tersedia, dan bug logika.
-- Jangan menutupi error atau mengklaim API gagal tanpa mereproduksi atau memeriksa dokumentasi versi terkait.
-- Sarankan perubahan kecil dan langkah verifikasi yang sesuai target.
+- Use full errors and logs as evidence. Separate load/import problems, lifecycle issues, unavailable APIs, and logic bugs.
+- Do not hide errors or claim an API is broken without checking documentation or reproducing the issue.
+- Recommend small changes and version-specific verification steps.
 
-## Checklist pengujian
+## Testing checklist
 
-- [ ] Modul dan versi dependency cocok dengan target runtime.
-- [ ] API dan signature diverifikasi pada referensi resmi.
-- [ ] Kondisi gagal dan nilai yang tidak tersedia ditangani sesuai kemampuan API.
-- [ ] Perilaku diuji pada versi target bila runtime tersedia; bila tidak, jelaskan bahwa pengujian belum dilakukan.
+- [ ] Module dependencies and versions match the target runtime.
+- [ ] APIs and signatures were checked in official documentation.
+- [ ] Missing values and failure cases are handled where supported.
+- [ ] Runtime behavior was tested on the target version, or the report states that it was not tested.
 
-## Referensi dan batas kompatibilitas
+## References and compatibility
 
-Lihat [panduan versioning repository](../../docs/bedrock-api-versioning.md), [Script API reference index](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/?view=minecraft-bedrock-stable), [`@minecraft/server`](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server?view=minecraft-bedrock-stable), dan [`@minecraft/server-ui`](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-ui/minecraft-server-ui?view=minecraft-bedrock-stable). Gunakan versi selector pada dokumentasi dan jangan menganggap versi stable terkini otomatis cocok untuk semua runtime.
+See the [repository versioning guide](../../docs/bedrock-api-versioning.md), [Script API reference index](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/?view=minecraft-bedrock-stable), [`@minecraft/server`](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server?view=minecraft-bedrock-stable), and [`@minecraft/server-ui`](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-ui/minecraft-server-ui?view=minecraft-bedrock-stable). Use the documentation version selector. The latest stable reference may not match every runtime.
 
-Sebutkan versi API yang menjadi dasar solusi, berikan perubahan minimal, dan jelaskan cara menguji di versi target. Jika kompatibilitas tidak pasti, tandai jelas bagian yang perlu diverifikasi daripada menyatakannya sebagai fakta.
+State the API version used as the basis for the solution. Give minimal changes and target-version test steps. Mark unverified compatibility clearly.

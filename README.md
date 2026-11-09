@@ -1,31 +1,32 @@
 # Kiako-Skill-MC
 
-Toolkit skill AI yang modular dan sadar versi untuk membantu pengembangan Minecraft Bedrock Add-on: Behavior Pack (BP), Resource Pack (RP), dan Script API.
+Kiako-Skill-MC is a modular, version-aware AI skill toolkit for Minecraft Bedrock add-on development. It supports Behavior Packs (BP), Resource Packs (RP), and Script API work.
 
-## Prinsip kompatibilitas
+## Compatibility principles
 
-- Periksa versi Minecraft Bedrock target serta versi module API sebelum menyarankan API atau format fitur.
-- Gunakan dokumentasi resmi Microsoft Learn / Minecraft Creator sebagai sumber utama; bedakan API stable, beta, preview, dan fitur eksperimental.
-- Jangan mengarang API atau menganggap dukungan satu versi berlaku pada versi lain.
-- Pertahankan data pemain, UUID pack, namespace, dan identifier yang sudah ada.
-- Pilih perubahan kecil dan praktis, hindari dependensi yang tidak diperlukan, dan jangan menyatakan pengujian berhasil bila belum dilakukan.
+- Check the target Minecraft Bedrock version and Script API module versions before using an API or format feature.
+- Prefer official Microsoft Learn and Minecraft Creator documentation.
+- Distinguish stable, beta, preview, and experimental features.
+- Do not invent APIs or assume that support in one version applies to another.
+- Preserve player data, pack UUIDs, namespaces, and identifiers.
+- Prefer small, practical changes. Do not claim tests were run unless they were.
 
-## 10 skill yang tersedia
+## Available skills
 
-| Skill | Fokus |
+| Skill | Focus |
 |---|---|
-| [addon-architect](./skills/addon-architect/SKILL.md) | Merancang arsitektur fitur BP/RP/script, batas komponen, struktur, data, dan rencana implementasi. |
-| [addon-validator](./skills/addon-validator/SKILL.md) | Mengaudit manifest, JSON, UUID, identifier, dependensi, aset, dan konsistensi pack. |
-| [bedrock-api-expert](./skills/bedrock-api-expert/SKILL.md) | Memverifikasi dan menggunakan Minecraft Bedrock Script API secara sadar versi. |
-| [bedrock-ui-expert](./skills/bedrock-ui-expert/SKILL.md) | Merancang UI berbasis form, alur interaksi pemain, validasi input, dan status UI. |
-| [block-item-expert](./skills/block-item-expert/SKILL.md) | Membuat dan meninjau block, item, interaksi, recipe, loot, identifier, dan aset BP/RP. |
-| [dynamic-property-expert](./skills/dynamic-property-expert/SKILL.md) | Merancang penyimpanan persisten, validasi data, dan migrasi yang aman. |
-| [entity-expert](./skills/entity-expert/SKILL.md) | Menangani entity kustom, komponen, event, AI, spawn, animasi, dan integrasi script. |
-| [javascript-debugger](./skills/javascript-debugger/SKILL.md) | Mendiagnosis bug JavaScript dan Script API dari bukti serta langkah reproduksi. |
-| [performance-optimizer](./skills/performance-optimizer/SKILL.md) | Menganalisis bottleneck dan mengoptimalkan event, tick, entity, memori, UI, dan beban script. |
-| [rpg-system-expert](./skills/rpg-system-expert/SKILL.md) | Merancang progression RPG, stats, level, class, ability, ekonomi, equipment, dan persistence. |
+| [addon-architect](./skills/addon-architect/SKILL.md) | Plan BP, RP, and script architecture, data boundaries, and implementation steps. |
+| [addon-validator](./skills/addon-validator/SKILL.md) | Audit manifests, JSON, UUIDs, identifiers, dependencies, assets, and pack references. |
+| [bedrock-api-expert](./skills/bedrock-api-expert/SKILL.md) | Verify and use Minecraft Bedrock Script API for the target version. |
+| [bedrock-ui-expert](./skills/bedrock-ui-expert/SKILL.md) | Design form-based UI, player interaction flows, input validation, and UI state. |
+| [block-item-expert](./skills/block-item-expert/SKILL.md) | Design and review blocks, items, interactions, recipes, loot, identifiers, and BP/RP assets. |
+| [dynamic-property-expert](./skills/dynamic-property-expert/SKILL.md) | Design persistent storage, validation, and safe data migrations. |
+| [entity-expert](./skills/entity-expert/SKILL.md) | Work with custom entities, components, events, AI, spawning, animation, and script integration. |
+| [javascript-debugger](./skills/javascript-debugger/SKILL.md) | Diagnose JavaScript and Script API bugs from evidence and reproduction steps. |
+| [performance-optimizer](./skills/performance-optimizer/SKILL.md) | Measure and improve event, scheduling, entity, memory, UI, and script performance. |
+| [rpg-system-expert](./skills/rpg-system-expert/SKILL.md) | Design RPG progression, stats, levels, classes, abilities, economy, equipment, and persistence. |
 
-## Struktur repository
+## Repository structure
 
 ```text
 Kiako-Skill-MC/
@@ -49,31 +50,29 @@ Kiako-Skill-MC/
     └── rpg-system-expert/SKILL.md
 ```
 
-## Cara menggunakan
+## Use the skills
 
-1. Clone atau unduh repository.
-2. Pilih folder skill yang sesuai dengan tugas; pertahankan nama folder dan `SKILL.md`.
-3. Impor folder tersebut ke AI coding agent yang mendukung format skill `SKILL.md`. Dukungan impor berbeda antar-platform, jadi ikuti panduan platform yang digunakan.
-4. Bila platform meminta URL, gunakan URL GitHub untuk folder skill atau tautan langsung ke `SKILL.md` pada branch yang ingin digunakan.
-5. Untuk tugas lintas domain, gabungkan skill terkait secukupnya—misalnya `addon-architect` untuk rancangan, `bedrock-api-expert` untuk API, dan skill domain fitur untuk implementasi.
+1. Clone or download the repository.
+2. Select the skill folder that matches the task. Keep its folder and `SKILL.md` together.
+3. Import the folder into an AI coding agent that supports `SKILL.md`. Import steps vary by platform; follow that platform's instructions.
+4. If the platform requests a GitHub URL, use the skill folder or the direct `SKILL.md` URL on the branch or release you want.
+5. For work across domains, combine only the relevant skills. For example, use `addon-architect` for planning, `bedrock-api-expert` for API checks, and a domain skill for feature details.
 
-## Dokumentasi
+## Documentation
 
-- [Arsitektur dan pembagian tanggung jawab skill](./docs/architecture.md)
-- [Panduan versi Minecraft Bedrock dan Script API](./docs/bedrock-api-versioning.md)
-- [Panduan membuat dan memelihara skill](./docs/skill-development-guide.md)
-- [Pemecahan masalah](./docs/troubleshooting.md)
+- [Architecture and skill boundaries](./docs/architecture.md)
+- [Minecraft Bedrock and Script API versioning](./docs/bedrock-api-versioning.md)
+- [Creating and maintaining skills](./docs/skill-development-guide.md)
+- [Troubleshooting](./docs/troubleshooting.md)
 
-## Kontribusi
+## Contributions
 
-- Jaga tiap skill tetap fokus, dengan tanggung jawab yang tidak tumpang tindih tanpa alasan.
-- Pertahankan konten berguna dan pola repository yang ada.
-- Verifikasi klaim teknis terhadap dokumentasi resmi untuk versi target.
-- Jangan mengubah UUID, identifier, atau data pemain tanpa kebutuhan dan rencana migrasi yang jelas.
-- Perbarui daftar skill, struktur, dan dokumentasi bila menambah atau memindahkan file.
-- Periksa tautan internal, frontmatter YAML, dan format Markdown sebelum mengirim kontribusi.
-- Laporkan dengan jujur pemeriksaan statis dan pengujian runtime yang benar-benar dilakukan.
+- Keep each skill focused. Avoid unnecessary overlap.
+- Preserve useful existing guidance and repository structure.
+- Verify technical claims against official documentation for the target version.
+- Do not change UUIDs, identifiers, or player data without a clear need and migration plan.
+- Update the README and relevant documentation when adding or moving a skill.
+- Check Markdown, YAML frontmatter, and relative links before submitting changes.
+- Report only checks and tests that were actually performed.
 
-## Batasan
-
-Repository ini adalah toolkit dokumentasi untuk bantuan AI, bukan pengganti dokumentasi resmi atau pengujian pada Minecraft Bedrock. API dan perilaku harus diverifikasi untuk versi target dan proyek nyata.
+This repository is a documentation toolkit. It does not replace official documentation or testing in Minecraft Bedrock.

@@ -1,72 +1,73 @@
 ---
 name: addon-validator
-description: Audit Minecraft Bedrock Add-on untuk konsistensi manifest, JSON, UUID, identifier, dependensi, dan aset BP/RP. Gunakan saat memeriksa integritas pack atau meninjau perubahan sebelum rilis.
+description: Audit Minecraft Bedrock add-on manifests, JSON, UUIDs, identifiers, dependencies, assets, and BP/RP references. Use when checking pack integrity or reviewing changes before release.
 ---
 
 # Add-on Validator
 
-Lakukan audit yang dapat ditelusuri dan utamakan temuan yang bisa direproduksi. Skill ini bertanggung jawab atas validasi pack secara menyeluruh; diagnosis runtime mendalam tetap dapat didelegasikan ke `javascript-debugger` atau skill domain.
+Perform traceable checks and prioritize reproducible findings. This skill owns pack-wide validation. Delegate deep runtime diagnosis to `javascript-debugger` or a domain skill when needed.
 
-## Tanggung jawab
+## Responsibilities
 
-- Memeriksa struktur pack, manifest, UUID, versi, dependency, dan entry point script.
-- Memvalidasi JSON dan referensi silang menurut skema/versi target.
-- Mencari identifier, aset, dan dependensi yang hilang, duplikat, atau tidak konsisten.
-- Melaporkan severity, bukti, dampak, dan perbaikan minimal tanpa mengubah data secara tidak aman.
+- Check pack structure, manifests, UUIDs, versions, dependencies, and script entry points.
+- Validate JSON and cross-file references against the target version.
+- Find missing, duplicated, or inconsistent identifiers, assets, and dependencies.
+- Report severity, evidence, impact, and minimal fixes without risking data loss.
 
-## Aturan teknis
+## Technical rules
 
-- Tentukan versi Minecraft Bedrock dan module API sebelum menilai kompatibilitas.
-- Validasi sintaks JSON terpisah dari validasi schema dan runtime; valid JSON belum tentu valid untuk engine.
-- Jangan menganggap format_version atau komponen berlaku lintas versi; verifikasi dokumentasi Creator resmi.
-- Jangan mengganti UUID, identifier, namespace, atau dynamic properties sebagai perbaikan generik.
-- Bedakan error terkonfirmasi, kemungkinan risiko, dan hal yang perlu diuji di runtime.
+- Identify the target Minecraft Bedrock and module versions before judging compatibility.
+- Treat JSON syntax, schema validity, and runtime behavior as separate checks. Valid JSON may still be invalid for the engine.
+- Verify `format_version` and components against official Creator documentation. Do not assume they work across versions.
+- Do not replace UUIDs, identifiers, namespaces, or dynamic properties as a generic fix.
+- Separate confirmed errors, possible risks, and issues that need runtime testing.
 
-## Workflow audit
+## Audit workflow
 
-1. Petakan BP/RP dan berkas manifest sebelum mengubah file.
-2. Parse setiap manifest/JSON dengan parser yang tersedia; jika tidak ada parser, laporkan bahwa pemeriksaan sintaks belum otomatis.
-3. Periksa UUID pack/module, versi, minimum engine, tipe module, entry point, serta dependency BP/RP/API. Cocokkan referensi silang.
-4. Kumpulkan identifier yang didefinisikan dan dirujuk; tandai definisi hilang, duplikasi, ejaan berbeda, dan referensi tanpa pasangan.
-5. Cocokkan path aset dan kapitalisasi dengan file nyata; periksa tekstur, geometry, animation, sound, loot, recipe, dan localization yang relevan.
-6. Verifikasi fitur/API/format terhadap Creator documentation untuk versi target.
-7. Susun temuan dari severity tertinggi, sertakan bukti dan perbaikan spesifik.
-8. Re-run pemeriksaan yang tersedia sesudah perbaikan dan jelaskan pemeriksaan runtime yang masih harus dilakukan.
+1. Map BP/RP folders and relevant manifests before editing.
+2. Parse each relevant manifest and JSON file. If no parser is available, state that syntax was not checked automatically.
+3. Check pack/module UUIDs, versions, minimum engine, module types, entry points, and BP/RP/API dependencies.
+4. Trace defined and referenced identifiers. Find missing definitions, duplicates, spelling differences, and references without a matching target.
+5. Compare asset paths and capitalization with files that exist. Check textures, geometry, animation, sound, loot, recipes, and localization where relevant.
+6. Verify features, APIs, and formats against Creator documentation for the target version.
+7. Rank findings by severity. Include evidence and a specific minimal fix.
+8. Repeat available checks after fixes. State which runtime checks remain.
 
-## Contoh audit referensi
+## Reference audit example
 
-Buat daftar sederhana sebelum menyatakan referensi lengkap:
+Use a table to track references. This is an audit method, not a JSON schema example.
 
-| Sumber | Referensi yang ditemukan | Target yang harus ada |
+| Source | Reference | Target to check |
 |---|---|---|
-| Manifest BP | UUID dependency pack, script entry, module dependency | UUID/versi pack dan berkas entry yang cocok |
-| Definisi konten | identifier entity/item/block | semua penggunaan identifier tersebut |
-| Recipe/loot | identifier input dan output | definisi item/block yang sesuai |
-| RP | texture, geometry, animation, sound reference | file/path dengan kapitalisasi yang cocok |
+| BP manifest | Pack UUID dependency, script entry, module dependency | Matching pack UUID/version and existing entry file |
+| Content definition | Entity, item, or block identifier | Every file that uses the identifier |
+| Recipe or loot | Input and output identifiers | Matching item or block definitions |
+| RP | Texture, geometry, or animation reference | Existing file or definition with matching path and name |
 
-Contoh ini adalah prosedur audit, bukan klaim schema JSON. Gunakan dokumentasi resmi untuk menentukan path atau field schema yang benar pada format target.
+Use official documentation to determine valid fields and paths for the target format.
 
-## Pelaporan temuan
+## Report findings
 
-Untuk setiap isu tulis:
-- **Severity**: blocker, high, medium, atau low, dengan alasan dampaknya.
-- **Lokasi**: file/baris atau pointer JSON bila tersedia.
-- **Bukti**: pesan log, referensi yang tidak cocok, atau aturan resmi yang berlaku.
-- **Dampak**: kegagalan load, konten hilang, kompatibilitas, atau risiko data.
-- **Perbaikan**: perubahan sekecil mungkin dan risiko migrasinya.
+For each issue, state:
 
-Jangan menyebut sebuah API/schema invalid hanya berdasarkan ingatan. Jika dokumentasi atau target versi tidak tersedia, klasifikasikan sebagai belum terverifikasi.
+- **Severity:** blocker, high, medium, or low, with impact.
+- **Location:** file and line, or JSON pointer when available.
+- **Evidence:** log message, mismatched reference, or applicable official requirement.
+- **Impact:** load failure, missing content, compatibility issue, or data risk.
+- **Fix:** smallest appropriate change and any migration risk.
 
-## Checklist validasi
+Do not call an API or schema invalid based only on memory. If the target version or official documentation is unavailable, mark the issue as unverified.
 
-- [ ] Seluruh manifest dan JSON yang relevan diperiksa sintaksnya.
-- [ ] Schema, `format_version`, module/API, dan minimum engine diverifikasi untuk target.
-- [ ] UUID dan dependency pack cocok; tidak ada UUID yang diganti tanpa alasan.
-- [ ] Identifier referensi dapat ditelusuri ke definisi dan konsisten ejaannya.
-- [ ] Path dan kapitalisasi aset cocok dengan file yang ada.
-- [ ] Temuan membedakan fakta, risiko, dan kebutuhan runtime test.
-- [ ] Perbaikan tidak mereset player data atau merusak identifier publik.
+## Validation checklist
 
-## Referensi resmi
+- [ ] Relevant manifests and JSON files were checked for syntax.
+- [ ] Schema, `format_version`, module/API, and minimum engine were checked for the target.
+- [ ] UUIDs and dependencies match. No UUID was changed without reason.
+- [ ] Identifier references resolve and are spelled consistently.
+- [ ] Asset paths and capitalization match existing files.
+- [ ] Findings distinguish facts, risks, and runtime test needs.
+- [ ] No fix resets player data or breaks public identifiers.
 
-Gunakan [panduan versioning](../../docs/bedrock-api-versioning.md), referensi resmi [`manifest.json`](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable), [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable), dan [Script API reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/?view=minecraft-bedrock-stable). Pilih versi dokumentasi yang sesuai target.
+## References
+
+Use the [versioning guide](../../docs/bedrock-api-versioning.md), official [`manifest.json` reference](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable), [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable), and [Script API reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/?view=minecraft-bedrock-stable). Select documentation for the target version.

@@ -1,27 +1,42 @@
 ---
 name: javascript-debugger
-description: Diagnosis dan perbaiki bug JavaScript pada Minecraft Bedrock Add-on dan Script API. Gunakan saat menganalisis error, perilaku tak terduga, atau kode yang gagal.
+description: Diagnose and fix JavaScript bugs in Minecraft Bedrock add-ons and Script API code. Use when investigating errors, unexpected behavior, or failing scripts.
 ---
 
 # JavaScript Debugger
 
-Temukan akar masalah berdasarkan bukti, lalu usulkan perbaikan paling kecil yang aman.
+Find the root cause from evidence. Recommend the smallest safe fix.
 
-## Alur diagnosis
+## Diagnostic workflow
 
-1. Kumpulkan pesan error lengkap, stack trace, langkah reproduksi, versi Minecraft, versi module API, dan konteks kode.
-2. Telusuri alur data dan lifecycle event terkait; bedakan error sintaks, runtime, kompatibilitas API, dan logika.
-3. Periksa nilai `undefined`/`null`, tipe data, asumsi entity/world, timing, event yang terdaftar, serta operasi asynchronous.
-4. Verifikasi setiap API yang dicurigai untuk versi target; jangan menyimpulkan bahwa API tersedia hanya berdasarkan contoh versi lain.
-5. Buat perubahan terkecil yang memperbaiki penyebab, bukan sekadar menyembunyikan error.
-6. Sertakan langkah reproduksi ulang, pemeriksaan log, dan pengujian regresi.
+1. Collect the full error, stack trace, reproduction steps, Minecraft version, module versions, and relevant code.
+2. Trace the data flow and event lifecycle. Separate syntax errors, runtime errors, API compatibility issues, and logic bugs.
+3. Check `undefined` and `null`, types, world/entity assumptions, timing, event registration, and asynchronous operations.
+4. Verify suspected APIs for the target version. Do not assume availability based on examples from another version.
+5. Fix the cause, not just the visible error. Keep the change as small as practical.
+6. Provide reproduction, log-check, and regression-test steps.
 
-## Batas keselamatan data
+## Data safety
 
-- Jangan menghapus atau mereset dynamic properties maupun data pemain untuk menghilangkan gejala.
-- Jangan menelan error tanpa logging atau penanganan yang jelas.
-- Pertahankan identifier dan perilaku yang sudah digunakan proyek kecuali perubahan tersebut memang diperlukan dan disertai migrasi.
+- Do not delete or reset dynamic properties or player data to hide a symptom.
+- Do not swallow errors without clear logging or handling.
+- Preserve existing identifiers and behavior unless a change is required and includes a migration plan.
 
-## Format jawaban
+## Error handling
 
-Sajikan akar masalah, bukti yang mendukung, file/baris terkait, perbaikan yang disarankan, serta cara memverifikasi. Jika bukti belum cukup, nyatakan hipotesis dan minta detail reproduksi yang diperlukan.
+- State what is known from logs and what is only a hypothesis.
+- If evidence is insufficient, request the missing reproduction details.
+- Do not claim a fix is verified unless it was tested.
+
+## Testing checklist
+
+- [ ] The issue has clear reproduction steps.
+- [ ] The first relevant error and source location were identified.
+- [ ] Suspected APIs were checked against the target version.
+- [ ] The proposed fix addresses the root cause and preserves data.
+- [ ] Regression steps cover the original failure and relevant edge cases.
+- [ ] Test results distinguish static review from runtime testing.
+
+## Response format
+
+Report the root cause, supporting evidence, file/line, proposed fix, and verification steps. If the cause is uncertain, label it as a hypothesis and ask for details needed to confirm it.

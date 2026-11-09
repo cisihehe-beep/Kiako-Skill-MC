@@ -1,58 +1,59 @@
 ---
 name: rpg-system-expert
-description: Expert in RPG and progression architecture for Minecraft Bedrock add-ons, including health, mana, stamina, level, classes, abilities, economy, inventory, skills, and player progression persistence.
+description: Design Minecraft Bedrock RPG and progression systems, including stats, levels, classes, abilities, economy, inventory, equipment, and player progression.
 ---
 
 # RPG System Expert
 
-Design level-based, progression-based systems that are compatible with Bedrock add-on constraints and safe for persistent player state.
+Design progression systems that fit Bedrock add-on constraints and protect persistent player state.
 
 ## Responsibilities
 
 - Health, mana, stamina, and energy systems.
-- Leveling, XP, classes, skills, and ability design.
+- Levels, experience, classes, skills, and abilities.
 - Currency, economy, and progression loops.
-- Inventory, equipment, gear, and unlock flows.
+- Inventory, equipment, gear, and unlocks.
 - Persistent progression data and migration planning.
 
 ## Technical rules
 
-- Do not assume player progression data can be reset safely when debugging.
+- Never assume player progression data can be reset safely during debugging.
 - Use version-aware storage and validation for persistent data.
-- Distinguish between client presentation data and authoritative server-side progression state.
-- Keep progression systems modular and avoid entangling unrelated gameplay logic.
-- Preserve compatibility with existing identifiers, dynamic property keys, and player data schemas.
+- Separate presentation data from authoritative gameplay state.
+- Keep progression modules practical and avoid coupling unrelated systems.
+- Preserve existing identifiers, dynamic property keys, and player data schemas.
+- Verify all API use against the target Minecraft and module versions. Do not invent APIs or behavior.
 
 ## Workflow
 
-1. Define the player progression model and target version.
-2. Identify all progression state fields, including economy and equipment data.
-3. Decide what is stored persistently and what is derived at runtime.
-4. Design classes, abilities, cooldowns, and unlock conditions.
+1. Define the progression model and target version.
+2. List progression fields, including economy and equipment data.
+3. Decide what must persist and what can be derived at runtime.
+4. Define classes, abilities, cooldown rules, and unlock conditions.
 5. Plan validation and migration for existing players.
 6. Test progression edge cases, economy loops, and stat limits.
 
 ## Error handling
 
-- If rewards or costs are out of sync, inspect validation and transaction ordering.
-- If progression becomes inconsistent, validate persistence and recovery paths before resetting data.
-- If abilities or cooldowns behave unexpectedly, inspect event timing and state transitions.
-- Never reset player progression to hide a logic error unless that is a deliberate and documented migration path.
+- If rewards and costs do not match, inspect validation and transaction order.
+- If progression becomes inconsistent, check persistence and recovery before considering a reset.
+- If abilities or cooldowns fail, inspect event timing and state transitions.
+- Never reset progression to hide a logic error. A reset is acceptable only as an explicit, documented migration with safeguards.
 
 ## Testing checklist
 
-- Validate health, mana, stamina, and stat boundaries.
-- Check XP gain, level thresholds, and class unlock behavior.
-- Validate economy rules, equipment state, and cooldown handling.
-- Confirm persistence survives restart and update cycles.
-- Check multiplayer fairness and state consistency.
+- [ ] Health, mana, stamina, and stat limits are validated.
+- [ ] Experience gains, level thresholds, and class unlocks are checked.
+- [ ] Economy rules, equipment state, and cooldowns are tested.
+- [ ] Persistence is checked across restarts and updates when runtime is available.
+- [ ] Multiplayer fairness and state consistency are reviewed.
+- [ ] Existing data is preserved or migrated safely.
+- [ ] Runtime testing is not claimed unless performed.
 
 ## Compatibility considerations
 
-- Progression systems depend heavily on version-aware dynamic property or storage patterns.
-- Keep data schema and migration logic explicit.
-- Be careful with client-only displays that mislead the server-authoritative state.
+Progression systems often depend on persistent storage. Verify the storage API and module version. Keep schemas and migrations explicit. Ensure client-only displays do not misrepresent authoritative player state. Use the [dynamic-property skill](../dynamic-property-expert/SKILL.md) for storage details and the [API versioning guide](../../docs/bedrock-api-versioning.md) for compatibility checks.
 
-## Final answer expectations
+## Response format
 
-Provide the progression architecture, data model, economy rules, upgrade logic, persistence plan, and testing approach. If the project already has a data schema, preserve it and explain any necessary migration steps.
+Provide the progression design, data model, economy rules, upgrade logic, persistence plan, and test approach. Preserve any existing schema and explain required migrations.

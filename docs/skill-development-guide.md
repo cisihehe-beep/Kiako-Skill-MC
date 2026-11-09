@@ -1,16 +1,16 @@
 # Skill development guide
 
-This guide describes how to create and maintain focused `SKILL.md` files in Kiako-Skill-MC. A skill should help an AI coding agent perform a defined class of Bedrock development tasks without pretending to replace project inspection or official API documentation.
+This guide explains how to create and maintain focused `SKILL.md` files in Kiako-Skill-MC. A skill should help an AI coding agent with a defined Bedrock development task. It does not replace project inspection or official API documentation.
 
-## Before creating or changing a skill
+## Before editing a skill
 
-1. Inspect the current repository structure, README, and related skill files.
-2. Identify the intended user task and the skill's unique responsibility.
-3. Check whether an existing skill already owns that topic. Extend it instead of creating a near-duplicate when practical.
-4. Preserve useful existing guidance; avoid broad rewrites without a clear reason.
-5. Identify technical claims that require version-specific evidence and link official documentation when relevant.
+1. Read the relevant existing skills and repository documentation.
+2. Define the task and the skill's unique responsibility.
+3. Check whether an existing skill already owns the topic. Extend it instead of creating a near-duplicate when practical.
+4. Preserve useful guidance. Avoid broad rewrites without a clear reason.
+5. Verify version-specific technical claims and link official documentation when useful.
 
-## Required file and frontmatter
+## File path and frontmatter
 
 Use one directory and one `SKILL.md` file per skill:
 
@@ -18,76 +18,72 @@ Use one directory and one `SKILL.md` file per skill:
 skills/<unique-skill-name>/SKILL.md
 ```
 
-Every file must start with valid YAML frontmatter delimited by `---`, and include a unique lowercase, hyphenated `name` plus a concise `description` that says what the skill does and when to use it:
+Start each file with valid YAML frontmatter. Include a unique lowercase, hyphenated `name` and a concise `description` that states what the skill does and when to use it:
 
 ```yaml
 ---
 name: example-skill
-description: Helps with a clearly bounded task and says when to use this skill.
+description: Helps with a defined task and explains when to use the skill.
 ---
 ```
 
-Keep frontmatter values valid YAML. Avoid unescaped YAML punctuation in plain scalars; quote a value if needed. The `name` should match its directory name. Descriptions should be specific enough to distinguish the skill from the others.
+The `name` should match its folder. Quote YAML values when needed to avoid parsing errors. Keep descriptions specific enough to distinguish skills.
 
 ## Recommended content
 
-Include the following sections, using headings appropriate to the domain:
+Cover these topics with clear, domain-specific instructions:
 
-- **Purpose and responsibilities:** what the skill owns and what it does not own.
-- **Technical rules:** version verification, data safety, identifiers, and limits relevant to the domain.
-- **Workflow:** concrete steps from gathering context through implementation or diagnosis.
-- **Error handling:** how to diagnose failures without hiding errors or causing data loss.
-- **Testing checklist:** static checks and runtime checks that apply to the task.
-- **Compatibility considerations:** game/module versions, stable versus prerelease/experimental requirements, and uncertainty handling.
-- **Final response expectations:** what evidence, assumptions, files, and next steps to report.
+- **Purpose and responsibilities:** what the skill owns and does not own.
+- **Technical rules:** version checks, data safety, identifiers, and domain limits.
+- **Workflow:** steps from context gathering to implementation or diagnosis.
+- **Error handling:** how to investigate failures without hiding errors or losing data.
+- **Testing checklist:** static checks and runtime tests relevant to the task.
+- **Compatibility:** game/module versions, stable or prerelease status, experiments, and uncertainty.
+- **Final response:** what evidence, assumptions, files, and next steps to report.
 
-A skill may combine sections where that improves clarity, but it should cover these responsibilities in substance.
+Sections can be combined when that improves clarity. Cover each topic in substance.
 
 ## Keep skill boundaries clear
 
-Use the following ownership as a guide:
-
-- `addon-architect`: overall feature decomposition and architecture.
-- `addon-validator`: pack-wide consistency and structural validation.
+- `addon-architect`: feature decomposition and BP/RP/script architecture.
+- `addon-validator`: pack-wide structure and consistency checks.
 - `bedrock-api-expert`: Script API verification and module compatibility.
-- `bedrock-ui-expert`: forms and UI interaction flow.
-- `block-item-expert`: block/item content and its assets/references.
-- `dynamic-property-expert`: persistence schema, validation, and migrations.
+- `bedrock-ui-expert`: forms and player interaction flows.
+- `block-item-expert`: block/item content and related assets/references.
+- `dynamic-property-expert`: persistence schema, validation, and migration.
 - `entity-expert`: entity definitions and behavior.
 - `javascript-debugger`: JavaScript/runtime root-cause analysis.
 - `performance-optimizer`: measured runtime performance and resource use.
 - `rpg-system-expert`: progression and economy rules.
 
-Cross-cutting requirements such as checking versions and protecting player data may appear in multiple skills; that repetition is intentional. Avoid duplicating detailed procedures owned by another specialist. Refer to the relevant skill or documentation instead.
+Cross-cutting requirements, such as checking versions and protecting player data, may appear in several skills. This is intentional. Avoid copying detailed procedures owned by another specialist. Refer to the relevant skill or guide instead.
 
 ## Technical accuracy and references
 
 - Never invent API names, signatures, JSON schemas, or runtime behavior.
-- Verify exact-version claims against Microsoft Learn / Minecraft Creator documentation.
-- Distinguish stable, beta, preview, and experimental status; do not present preview information as a stable guarantee.
-- Link to authoritative references when they directly support technical guidance. Avoid link lists that do not serve the skill's purpose.
-- Preserve UUIDs, identifiers, and persistent data; describe migration when a change requires it.
-- Do not claim code or gameplay was tested unless the test was actually run.
+- Verify version-specific claims in Microsoft Learn or Minecraft Creator documentation.
+- Distinguish stable, beta, preview, and experimental status.
+- Link authoritative references when they support the guidance. Avoid unrelated link lists.
+- Preserve UUIDs, identifiers, and persistent data. Document migration when a change requires it.
+- Do not claim that code or gameplay was tested unless the test was run.
 
 ## Markdown and repository maintenance
 
-- Use clear heading hierarchy, fenced code blocks with language labels where appropriate, and concise lists.
-- Use relative links for repository documentation and verify each target exists.
-- Update README skill descriptions and the structure tree when adding, renaming, or moving files.
-- Keep `docs/architecture.md`, `docs/bedrock-api-versioning.md`, and `docs/troubleshooting.md` consistent with actual content and scope.
-- Do not create empty placeholder files or delete existing skills as a shortcut.
+- Use clear headings and concise lists. Label code fences with a language where appropriate.
+- Use relative links for repository files and check that each target exists.
+- Update the README skill list and structure when adding, renaming, or moving files.
+- Keep architecture, API versioning, and troubleshooting documentation consistent with the skills.
+- Do not create empty placeholders or delete existing skills as a shortcut.
 
 ## Review checklist
 
-Before committing a skill change, verify:
-
-- [ ] Frontmatter parses as YAML and contains a unique name and useful description.
-- [ ] Name, folder path, README entry, and actual responsibility agree.
-- [ ] Required responsibilities, rules, workflow, error handling, testing, and compatibility are covered.
-- [ ] No unsupported APIs or false version guarantees are asserted.
-- [ ] Instructions do not contradict other skills or project principles.
-- [ ] Useful existing content and data-safety guidance are preserved.
+- [ ] Frontmatter is valid YAML and includes a unique name and useful description.
+- [ ] The name, folder, README entry, and responsibility match.
+- [ ] Responsibilities, rules, workflow, error handling, testing, and compatibility are covered.
+- [ ] No unsupported APIs or false version guarantees are stated.
+- [ ] Instructions do not conflict with other skills or project principles.
+- [ ] Useful existing guidance and data-safety rules are preserved.
 - [ ] Internal links resolve and Markdown is readable.
-- [ ] Validation claims accurately describe what was checked.
+- [ ] Validation claims state only what was checked.
 
 Related guides: [architecture](./architecture.md), [API versioning](./bedrock-api-versioning.md), and [troubleshooting](./troubleshooting.md).

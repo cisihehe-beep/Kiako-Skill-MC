@@ -1,69 +1,67 @@
 ---
 name: block-item-expert
-description: Rancang dan audit custom block/item Minecraft Bedrock beserta interaksi, recipe, loot, identifier, texture, dan kompatibilitas BP/RP. Gunakan untuk fitur konten blok atau item.
+description: Design and audit custom Minecraft Bedrock blocks and items, including interactions, recipes, loot, identifiers, textures, and BP/RP compatibility. Use for block or item content work.
 ---
 
-# Block & Item Expert
+# Block and Item Expert
 
-Bantu merancang dan meninjau konten block/item Bedrock dengan menjaga hubungan BP/RP, stabilitas identifier, dan kompatibilitas versi. Skill ini berfokus pada konten block/item; validasi keseluruhan pack milik `addon-validator`.
+Design and review Bedrock block and item content. Preserve BP/RP links, identifier stability, and version compatibility. Pack-wide validation belongs to `addon-validator`.
 
-## Tanggung jawab
+## Responsibilities
 
-- Definisi dan perilaku custom block/item serta interaksi penggunaan/penempatan.
-- Keterkaitan BP/RP, identifier, texture, geometry, dan asset mapping.
-- Recipe dan loot yang menghasilkan atau menggunakan konten terkait.
-- Pemeriksaan kompatibilitas fitur pada versi Bedrock target.
+- Custom block and item definitions and interactions.
+- BP/RP references, identifiers, textures, geometry, and asset mappings.
+- Recipes and loot that use or produce the content.
+- Feature compatibility for the target Bedrock version.
 
-## Aturan teknis
+## Technical rules
 
-- Verifikasi versi game, dependency/module bila Script API dipakai, dan format JSON resmi sebelum memberi contoh schema.
-- Jangan mengarang component, field, `format_version`, event, method, atau asset mapping.
-- Jangan mengubah identifier publik atau menghapus referensi lama tanpa rencana kompatibilitas.
-- Bedakan definisi BP, representasi RP, dan script-driven behavior; tambahkan script hanya bila diperlukan.
-- Path dan kapitalisasi aset adalah bagian dari referensi: pastikan nama dalam definisi cocok persis dengan file/proyek.
+- Verify the game version, module dependencies when Script API is used, and official JSON format before giving schema examples.
+- Do not invent components, fields, `format_version`, events, methods, or asset mappings.
+- Do not change public identifiers or remove old references without a compatibility plan.
+- Separate BP definitions, RP assets, and script behavior. Add script only when needed.
+- Check asset paths and capitalization against the actual project files.
 
 ## Workflow
 
-1. Уточнить feature, target version, and whether work is BP-only, RP-only, or both. (Keep project language consistent in the final response.)
-2. Inspect existing manifests, namespace, IDs, JSON definitions, and asset naming conventions.
-3. Verify the needed content format and each component/field against official Creator documentation for the target version.
-4. Trace all references: definition → identifier → texture/model mapping → recipe/loot/interaction references.
-5. Implement the smallest change following the project's existing organization; preserve IDs and unrelated data.
-6. Validate JSON syntax, reference paths, and content behavior in a test world when available.
+1. Identify the requested behavior, target version, and whether the work uses BP, RP, or both.
+2. Inspect existing manifests, namespaces, identifiers, definitions, and asset naming.
+3. Verify required formats and components in official Creator documentation for the target version.
+4. Trace references from each definition to identifiers, texture/model mappings, recipes, loot, and interactions.
+5. Make the smallest change that follows the project's existing structure.
+6. Validate JSON syntax and references. Test in a target-version world when available.
 
-## Contoh pemeriksaan konkret
+## Concrete checks
 
-Saat block/item tidak tampil atau tidak bisa digunakan, audit per berkas tanpa mengasumsikan schema:
+When a block or item is missing or cannot be used:
 
-- Cocokkan identifier pada definisi BP dengan identifier yang dipakai recipe, loot, atau script.
-- Cocokkan nama texture key yang dirujuk konten dengan mapping RP dan file gambar yang ada.
-- Periksa kapitalisasi seluruh direktori/filename serta apakah BP dan RP yang saling bergantung sama-sama aktif.
-- Untuk interaksi melalui Script API, verifikasi event/component dan signature yang benar pada module version target sebelum menyarankan implementasi.
-- Untuk recipe/loot, verifikasi field dan format pada referensi resmi sesuai format/version target; jangan menyalin contoh lama tanpa pemeriksaan.
+- Compare identifiers in BP definitions with identifiers used by recipes, loot, or scripts.
+- Compare texture keys referenced by content with RP mappings and existing image files.
+- Check directory and file capitalization. Confirm that dependent BP and RP packs are enabled.
+- For Script API interactions, verify the event, component, and signature for the declared module version.
+- For recipes and loot, verify fields and format against official documentation for the target version.
 
-Ini adalah langkah audit dan bukan contoh JSON schema/API.
+These are inspection steps, not JSON schema or API examples.
 
-## Penanganan kesalahan
+## Error handling
 
-- Jika konten hilang, mulai dari Content Log, status pack, JSON parse, identifier, lalu referensi aset.
-- Jika aksi gagal, pisahkan masalah definisi pack dari masalah Script API; verifikasi API hanya melalui dokumentasi versi terkait.
-- Jika recipe/loot tidak menghasilkan item, telusuri input/output ke definisi identifier yang tepat dan periksa aturan schema resmi.
-- Hindari perbaikan destruktif seperti mengganti identifier atau menghapus data pemain.
+- Start with Content Log, pack status, JSON parsing, identifiers, and asset references.
+- Separate pack-definition errors from Script API errors. Verify API claims against the target-version documentation.
+- Trace recipe and loot inputs/outputs to the correct definitions. Check the official schema for the target format.
+- Do not change identifiers or delete player data as a generic fix.
 
-## Checklist pengujian
+## Testing checklist
 
-- [ ] Versi engine dan format konten target telah dicatat.
-- [ ] JSON parse dan schema/version telah diperiksa secara terpisah.
-- [ ] Identifier unik/konsisten dan referensinya terhubung.
-- [ ] Asset mapping, file, path, dan kapitalisasi cocok.
-- [ ] Recipe/loot/interaksi yang berubah diuji pada skenario relevan.
-- [ ] BP/RP dependency dan aktivasi pack diverifikasi.
-- [ ] Pengujian runtime dilaporkan hanya bila benar-benar dilakukan.
+- [ ] Target game version and content format are known.
+- [ ] JSON syntax and target schema/version were checked separately.
+- [ ] Identifiers and references are consistent.
+- [ ] Asset mappings, paths, files, and capitalization match.
+- [ ] Changed recipes, loot, placement, and use behavior were tested where possible.
+- [ ] BP/RP dependencies and pack activation were checked.
+- [ ] Runtime tests are reported only if performed.
 
-## Kompatibilitas dan referensi resmi
+## Compatibility and references
 
-Gunakan [panduan versioning repository](../../docs/bedrock-api-versioning.md), [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable), panduan resmi [custom items](https://learn.microsoft.com/en-us/minecraft/creator/documents/addcustomitems?view=minecraft-bedrock-stable), [recipes](https://learn.microsoft.com/en-us/minecraft/creator/documents/how_to_add_a_custom_recipe?view=minecraft-bedrock-stable), dan [resource packs](https://learn.microsoft.com/en-us/minecraft/creator/documents/resource_packs?view=minecraft-bedrock-stable). Untuk custom block dan loot table, cari referensi Creator yang sesuai pada versi target sebelum mengandalkan field atau format tertentu.
+See the [repository versioning guide](../../docs/bedrock-api-versioning.md), [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable), [custom items guide](https://learn.microsoft.com/en-us/minecraft/creator/documents/addcustomitems?view=minecraft-bedrock-stable), [custom recipes guide](https://learn.microsoft.com/en-us/minecraft/creator/documents/how_to_add_a_custom_recipe?view=minecraft-bedrock-stable), and [resource packs guide](https://learn.microsoft.com/en-us/minecraft/creator/documents/resource_packs?view=minecraft-bedrock-stable). Find the official block and loot references for the target version before relying on specific fields or formats.
 
-## Format jawaban
-
-Jelaskan definisi/berkas yang terdampak, relasi identifier dan aset, versi/format yang diverifikasi, langkah validasi, serta kasus uji. Nyatakan jelas bila schema atau dukungan fitur belum terkonfirmasi.
+Report affected files, identifier and asset links, verified version/format, validation steps, and test cases. Mark unverified schemas or feature support clearly.

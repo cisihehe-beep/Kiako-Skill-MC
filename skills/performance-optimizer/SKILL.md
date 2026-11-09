@@ -1,74 +1,74 @@
 ---
 name: performance-optimizer
-description: Analisis dan optimalkan performa Minecraft Bedrock Script API dengan fokus pada bottleneck terukur, event, scheduling, pemrosesan entity, UI, memori, dan watchdog.
+description: Analyze and improve Minecraft Bedrock Script API performance. Focus on measured bottlenecks, events, scheduling, entity processing, UI, memory, and watchdog protection.
 ---
 
 # Performance Optimizer
 
-Tingkatkan efisiensi runtime tanpa mengorbankan kebenaran gameplay atau data. Utamakan pengukuran dan perubahan kecil; jangan mendiagnosis bottleneck hanya dari dugaan.
+Improve runtime efficiency without harming gameplay or data. Measure before optimizing. Prefer small, evidence-based changes.
 
-## Tanggung jawab
+## Responsibilities
 
-- Menganalisis biaya event handler, loop/tick, scheduling, dan pemrosesan entity.
-- Mencari subscription/task ganda, work berulang, memory retention, dan UI work yang tidak perlu.
-- Menyusun cara profiling dan membandingkan baseline dengan perubahan.
-- Menjelaskan batasan/watchdog berdasarkan dokumentasi, bukan menaikkan limit sebagai solusi otomatis.
+- Analyze event handlers, loops/ticks, scheduling, and entity processing costs.
+- Find duplicate subscriptions or tasks, repeated work, retained memory, and unnecessary UI work.
+- Plan profiling and compare a baseline with changes.
+- Explain watchdog limits using evidence. Do not treat raising limits as the default fix.
 
-## Aturan teknis
+## Technical rules
 
-- Identifikasi dan ukur bottleneck sebelum mengoptimalkan.
-- Verifikasi API scheduling, event, profiler, serta perilakunya pada module/game version target.
-- Hindari asumsi angka batas waktu/tick/memori yang tidak dibuktikan oleh dokumentasi resmi atau hasil pengukuran target.
-- Jangan memperkenalkan polling per tick jika event atau jadwal lebih jarang yang sesuai dapat memenuhi kebutuhan.
-- Pertahankan data, identifier, dan perilaku gameplay; jangan mengurangi validasi atau keselamatan data demi benchmark.
-- Bedakan rekomendasi teoritis dari peningkatan yang benar-benar diukur.
+- Identify and measure the bottleneck before optimizing.
+- Verify scheduling, event, and profiler APIs for the target game and module version.
+- Do not assume time, tick, or memory thresholds without official documentation or measurements from the target runtime.
+- Avoid per-tick polling when a suitable verified event or less frequent schedule meets the need.
+- Preserve player data, identifiers, and gameplay correctness. Do not remove validation to improve benchmarks.
+- Separate theoretical recommendations from measured improvements.
 
 ## Workflow
 
-1. Kumpulkan skenario reproduksi, versi game/module, jumlah pemain/entity, dan error/watchdog log.
-2. Catat baseline dengan profiler atau alat yang didokumentasikan untuk versi target; bila profiler tidak tersedia, nyatakan batas pengukuran.
-3. Telusuri event registration dan initialization untuk mencari handler berulang, pekerjaan per event, atau subscription yang tidak dilepas.
-4. Periksa operasi mahal di loop: scan entity luas, komputasi berulang, I/O/state access, allocation berlebihan, dan pembaruan UI yang sering.
-5. Klasifikasikan bottleneck dengan bukti: CPU/script time, scheduling pressure, allocation/retention, atau output/UI churn.
-6. Terapkan satu perubahan kecil, pertahankan output/gameplay yang diharapkan, dan ukur ulang pada skenario sebanding.
-7. Uji beban realistis, multiplayer, dan kondisi cleanup; laporkan hasil serta keterbatasan.
+1. Collect reproduction steps, game/module versions, player/entity counts, and watchdog or error logs.
+2. Record a baseline with a profiler or tool documented for the target version. State limitations if no profiler is available.
+3. Trace event registration and initialization. Look for duplicate handlers, repeated work, and missing cleanup.
+4. Check expensive loops: broad entity scans, repeated calculations, state access, excess allocations, and frequent UI updates.
+5. Classify the bottleneck using evidence: script time, scheduling pressure, allocation/retention, or UI/output churn.
+6. Make one small change that preserves expected behavior. Measure again under comparable conditions.
+7. Test realistic load, multiplayer, and cleanup. Report results and limits.
 
-## Contoh pemeriksaan konkret
+## Concrete inspection example
 
-Saat investigating stutter atau watchdog warnings, bandingkan work per pemicu dalam tabel:
+For stutter or watchdog warnings, compare work per trigger. This table is an inspection method, not an API example or performance threshold.
 
-| Lokasi | Ukur/periksa | Pertanyaan |
+| Area | Measure or inspect | Question |
 |---|---|---|
-| Event handler | jumlah panggilan dan waktu/biaya relatif | Apakah satu event melakukan scan atau kalkulasi yang sama berulang? |
-| Scheduled task | interval, jumlah task aktif, dan kondisi berhenti | Apakah task dibuat ulang tanpa dibersihkan atau tanpa kebutuhan? |
-| Entity loop | jumlah entity yang diproses dan frekuensi | Dapatkah pemrosesan dibatasi ke konteks relevan tanpa mengubah hasil? |
-| UI | jumlah form/pembaruan dan pemicu | Apakah UI dibangun ulang walau state tidak berubah? |
-| Memory | objek/cache/referensi yang bertahan | Apakah lifecycle cleanup melepaskan state yang tidak lagi diperlukan? |
+| Event handler | Call count and relative cost | Does one event repeat the same scan or calculation? |
+| Scheduled task | Interval, active task count, stop conditions | Are tasks recreated or left running without need? |
+| Entity loop | Entity count and processing frequency | Can work be limited to relevant entities without changing results? |
+| UI | Form/update count and triggers | Is UI rebuilt when state has not changed? |
+| Memory | Objects, caches, and retained references | Does cleanup release state that is no longer needed? |
 
-Untuk API seperti scheduler, event subscription, atau profiler, periksa nama/signature/metode berhenti pada [`System` reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system?view=minecraft-bedrock-stable), dokumentasi event terkait, dan performance guide. Tabel ini prosedur pengukuran, bukan contoh API atau angka ambang.
+For scheduling, event subscription, or profiling APIs, check the [`System` reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system?view=minecraft-bedrock-stable), the relevant event reference, and the [scripting performance guide](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/script-performance?view=minecraft-bedrock-stable). Verify method names and signatures for the target version before using them.
 
-## Penanganan error
+## Error handling
 
-- Simpan pesan watchdog lengkap dan konteks reproduksi; jangan menonaktifkan/mengabaikan warning sebelum akar masalah diperiksa.
-- Jika subscription/task diduga menumpuk, telusuri semua jalur inisialisasi dan cleanup sebelum mengubahnya.
-- Jika optimasi mengubah timing, evaluasi race/state behavior serta validasi pada server-side gameplay.
-- Jika tidak ada profiler atau runtime target, jangan mengklaim hasil ukur; berikan hipotesis dan rencana pengumpulan data.
+- Keep full watchdog messages and reproduction context. Do not suppress warnings before investigating the cause.
+- If subscriptions or tasks may accumulate, trace initialization and cleanup before changing them.
+- If an optimization changes timing, check state transitions and server-side behavior.
+- If no profiler or target runtime is available, do not claim measurements. State hypotheses and propose data collection steps.
 
-## Checklist pengujian
+## Testing checklist
 
-- [ ] Target game/module version dan cara profiling diverifikasi.
-- [ ] Baseline dan skenario beban tercatat sebelum perubahan.
-- [ ] Frequency/volume event, task, entity processing, atau UI work diperiksa.
-- [ ] Perubahan hanya menyasar bottleneck dengan bukti.
-- [ ] Pengukuran before/after dilakukan dalam kondisi setara bila runtime tersedia.
-- [ ] Beban pemain/entity dan cleanup/subscription lifecycle diuji.
-- [ ] Gameplay, data persistence, dan error handling tetap benar.
-- [ ] Klaim performa dibatasi pada data yang benar-benar dikumpulkan.
+- [ ] Target game/module versions and profiling method are verified.
+- [ ] Baseline and load scenario are recorded before changes.
+- [ ] Event/task frequency and entity/UI work are reviewed.
+- [ ] Changes target a bottleneck supported by evidence.
+- [ ] Before/after measurements use comparable conditions when runtime is available.
+- [ ] Player/entity load and cleanup/subscription lifecycle are tested.
+- [ ] Gameplay, data persistence, and error handling remain correct.
+- [ ] Performance claims match the data collected.
 
-## Kompatibilitas dan referensi resmi
+## Compatibility and official references
 
-Lihat [panduan versioning repository](../../docs/bedrock-api-versioning.md), Microsoft Learn [Performance in Scripting](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/script-performance?view=minecraft-bedrock-stable), [`System` class](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system?view=minecraft-bedrock-stable), dan [Game Loops and Timed Callbacks](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/system-run-guide?view=minecraft-bedrock-stable). Referensi event/watchdog yang lebih spesifik harus dibuka dan diverifikasi untuk target module/runtime sebelum mengusulkan pemanggilan API tertentu.
+See the [repository versioning guide](../../docs/bedrock-api-versioning.md), Microsoft Learn [Performance in Scripting](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/script-performance?view=minecraft-bedrock-stable), [`System` class](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system?view=minecraft-bedrock-stable), and [Game Loops and Timed Callbacks](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/system-run-guide?view=minecraft-bedrock-stable). Verify more specific event or watchdog references for the target runtime before recommending API calls.
 
-## Format jawaban
+## Response format
 
-Sertakan bukti bottleneck, metode ukur, perubahan minimal, dampak/risiko, dan rencana atau hasil pengukuran ulang. Nyatakan jelas jika optimasi hanya rekomendasi dan belum diuji under load.
+Report bottleneck evidence, measurement method, minimal change, risks, and remeasurement steps or results. State when an optimization is only a recommendation and has not been tested under load.
