@@ -29,7 +29,7 @@ Toolkit skill AI yang modular dan sadar versi untuk membantu pengembangan Minecr
 
 ```text
 Kiako-Skill-MC/
-��── LICENSE
+├── LICENSE
 ├── README.md
 ├── docs/
 │   ├── architecture.md
