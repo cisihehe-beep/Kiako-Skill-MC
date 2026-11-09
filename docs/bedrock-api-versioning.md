@@ -1,88 +1,80 @@
-# Architecture overview
+# Bedrock API versioning guide
 
-This repository is organized as a collection of focused, version-aware Bedrock development skills. Each skill addresses a bounded domain so an AI assistant can reason about a problem without mixing unrelated concerns.
+Bedrock add-on compatibility involves more than one version number. A project may target a Minecraft Bedrock game version, declare a minimum engine version for pack content, and request separate versions of Script API modules. Treat those values as related constraints, not interchangeable labels.
 
-## Design goals
+## The versions to track
 
-- Keep each skill specific and usable in isolation.
-- Avoid fabricating unsupported APIs or undocumented behavior.
-- Favor correctness and compatibility over broad abstraction.
-- Keep player data, pack identifiers, and entity definitions stable.
-- Make architecture trade-offs explicit.
+### Minecraft Bedrock game version
 
-## Core layers
+Record the actual game/runtime version used for development and testing, and the supported version range if the pack targets more than one release. A feature available in a newer release may not exist in an older runtime.
 
-### 1. Pack and manifest layer
+### `@minecraft/server` and `@minecraft/server-ui`
 
-This includes Behavior Pack and Resource Pack definitions, pack structure, versions, identifiers, dependencies, and asset references.
+These are separately versioned Script API modules. The version requested for `@minecraft/server` is not the Minecraft game version, and `@minecraft/server-ui` has its own published versions and compatibility information. Check each module's official reference and release/version information. Do not copy a module version from an unrelated example or assume two module versions advance together.
 
-Responsibilities:
-- `addon-architect`
-- `addon-validator`
-- `bedrock-api-expert`
+### Stable, beta, preview, and experimental
 
-### 2. Gameplay and logic layer
+- **Stable API**: documented as stable for the relevant module version. Still confirm the target runtime supports that module version.
+- **Beta API**: a prerelease API surface that may change. It may require a preview runtime, a beta module version, or a world experiment; follow the requirements stated in the current official documentation for that API.
+- **Preview**: a Minecraft distribution/runtime channel. Preview availability is not by itself proof that an API is stable or enabled.
+- **Experimental feature**: a game/world feature gated by an experiment or configuration. This is distinct from a module version; verify both the feature's requirements and the API's status.
 
-This includes script-driven behavior, entity logic, custom blocks/items, world interaction, and stateful systems.
+Do not treat these labels as synonyms. Report uncertainty when current documentation does not clearly establish a feature's status.
 
-Responsibilities:
-- `entity-expert`
-- `block-item-expert`
-- `javascript-debugger`
-- `performance-optimizer`
+## Inspect `manifest.json`
 
-### 3. Data and progression layer
+Read the Behavior Pack manifest before proposing script changes. Check at least:
 
-This includes persistent state, economy, progression, player metadata, and experience systems.
+- `header.uuid` and each module UUID are valid and unique within the project; do not casually regenerate existing UUIDs.
+- `header.version` and module `version` describe pack/module revisions, not Script API package versions.
+- `header.min_engine_version` expresses the minimum engine requirement for pack content; it is not a substitute for checking script module compatibility.
+- `modules` includes the intended script module and correct entry point where scripts are used.
+- `dependencies` declares the exact module names and versions needed, such as `@minecraft/server` and, when used, `@minecraft/server-ui`.
+- BP/RP dependency UUIDs and versions match the packs they refer to.
+- Any experiments required by content are documented and enabled only when necessary.
 
-Responsibilities:
-- `dynamic-property-expert`
-- `rpg-system-expert`
+Do not invent a universally valid manifest snippet: required fields and supported versions depend on current Creator documentation and the project's target versions. Preserve project UUIDs and identifiers during repair.
 
-### 4. User experience layer
+## Verify APIs using official references
 
-This includes forms, menus, instructions, input flows, and UI state.
+For each API, class, method, event, component, or form used:
 
-Responsibilities:
-- `bedrock-ui-expert`
+1. Identify its module and the project's declared module version.
+2. Open the official module reference and inspect the member's description and availability/version information.
+3. Check official scripting guides, release notes, or migration notes for lifecycle, stability, and breaking changes.
+4. Confirm the target Minecraft runtime can provide the declared module version.
+5. If the feature requires preview or experiments, record that requirement and provide a stable alternative only if one is documented.
+6. If official references do not establish availability, mark the API as unverified instead of guessing.
 
-## Cross-cutting principles
+Primary references:
 
-- Verify version compatibility before adding API usage.
-- Prefer official documentation and project evidence over memory.
-- Use minimal changes that fix the root cause.
-- Keep identifiers and UUIDs stable across pack revisions.
-- Document migration and rollback paths for persistent data changes.
+- [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable)
+- [Script API reference index](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/?view=minecraft-bedrock-stable)
+- [`@minecraft/server` module reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server?view=minecraft-bedrock-stable)
+- [`@minecraft/server-ui` module reference](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-ui/minecraft-server-ui?view=minecraft-bedrock-stable)
+- [Add-ons `manifest.json` reference](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable)
+- [Scripting V2 overview](https://learn.microsoft.com/en-us/minecraft/creator/documents/scripting/v2-overview?view=minecraft-bedrock-stable)
 
-## Skill selection guidance
+Use the version selector and module-version information on the official pages. These references can change as Minecraft documentation is updated.
 
-Use the smallest relevant skill for the task:
+## Cross-version compatibility strategy
 
-- planning/architecture -> `addon-architect`
-- validation -> `addon-validator`
-- API usage -> `bedrock-api-expert`
-- forms and UI -> `bedrock-ui-expert`
-- entities -> `entity-expert`
-- blocks/items -> `block-item-expert`
-- progression/economy -> `rpg-system-expert`
-- persistence/data -> `dynamic-property-expert`
-- debugging -> `javascript-debugger`
-- performance -> `performance-optimizer`
+1. Establish the oldest and newest game versions the pack intends to support.
+2. List the required module versions and feature requirements for each supported runtime.
+3. Prefer the lowest stable module/API surface that provides the feature across the declared range.
+4. If a capability is unavailable in older versions, choose a documented fallback, explicitly narrow the supported range, or maintain clearly separated implementation paths only when justified.
+5. Avoid silently changing identifiers, manifest UUIDs, persistent property keys, or stored data schemas to accommodate a version change.
+6. Validate pack files and imports against the target versions, then test in a copied/test world on each supported runtime where feasible.
+7. Document the tested range and distinguish static checks from actual in-game tests.
 
-## Repository workflow
+## Checklist
 
-1. Start with architecture if the task is ambiguous.
-2. Validate the pack and manifest if the project already exists.
-3. Confirm the exact Bedrock version and module requirements.
-4. Implement the minimum required logic or assets.
-5. Validate behavior in a test world.
-6. Profile performance only when necessary or when runtime risk is identified.
+- [ ] Game/runtime target and supported range are stated.
+- [ ] `min_engine_version` and pack/module versions are understood separately.
+- [ ] Every Script API module dependency is explicitly checked.
+- [ ] API members are present in official references for the chosen module version.
+- [ ] Stable, beta, preview, and experimental requirements are distinguished.
+- [ ] Existing UUIDs, identifiers, and persistent player data remain intact.
+- [ ] Cross-version limitations and testing evidence are reported.
 
-## Limitations
-
-This repository does not replace official Bedrock documentation. It makes those principles easier to apply in AI-assisted workflows, but it still depends on the target version and the actual project state.
-
-Related docs:
-- [Bedrock API versioning guide](./bedrock-api-versioning.md)
-- [Skill development guide](./skill-development-guide.md)
-- [Troubleshooting guide](./troubleshooting.md)
+Related guides: [architecture](./architecture.md), [skill development](./skill-development-guide.md), and [troubleshooting](./troubleshooting.md).

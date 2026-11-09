@@ -1,129 +1,49 @@
-# Kiako-Skill-MC
+# Architecture overview
 
-Kiako-Skill-MC is a modular, version-aware AI skill toolkit for Minecraft Bedrock add-on development. It helps AI coding agents and developers work safely with Behavior Packs, Resource Packs, Script API, UI systems, entities, items, progression systems, and performance-sensitive gameplay logic.
+Kiako-Skill-MC is a collection of focused AI skills for Minecraft Bedrock add-on development. The repository provides guidance, not a runtime framework: skills help an agent inspect a project, choose an appropriate domain, and make version-aware changes.
 
-## Project overview
+## Design principles
 
-This repository is designed to provide specialized knowledge for common Bedrock add-on tasks without inventing APIs or assuming features work across versions. Every skill follows a simple principle:
+- Verify capabilities against the target game and module versions.
+- Prefer official Microsoft Learn / Minecraft Creator documentation.
+- Keep existing UUIDs, identifiers, namespaces, and player data intact.
+- Avoid unnecessary dependencies and broad rewrites.
+- State assumptions and distinguish verified results from proposed checks.
 
-- Verify the target Bedrock version before using any API or feature.
-- Prefer official Microsoft Learn and Minecraft Creator documentation.
-- Protect existing world data, identifiers, and UUIDs.
-- Favor small, maintainable changes over broad rewrites.
-- Make risks and compatibility assumptions explicit.
+## Skill boundaries
 
-## Available skills
+### Planning and validation
 
-### Core skills
+- `addon-architect` owns feature decomposition, BP/RP/script boundaries, and implementation planning.
+- `addon-validator` owns pack-wide validation of manifests, JSON, identifiers, dependencies, and asset references.
 
-- `bedrock-api-expert` — version-aware guidance for Bedrock Script API and module usage.
-- `addon-architect` — architecture and technical planning for BP/RP/script-based features.
-- `addon-validator` — audit of manifests, JSON, identifiers, dependencies, and pack integrity.
-- `dynamic-property-expert` — persistent data design, validation, and migration for player/world/entity state.
-- `javascript-debugger` — diagnosis and debugging of JavaScript and Script API runtime issues.
+### Script API and debugging
 
-### Expanded Bedrock skills
+- `bedrock-api-expert` verifies Script API availability, module dependencies, and version-specific usage.
+- `javascript-debugger` investigates JavaScript/runtime failures and identifies root causes from logs and reproduction steps.
+- `performance-optimizer` investigates measured runtime bottlenecks, event/tick work, and resource growth.
 
-- `bedrock-ui-expert` — Action Form, Modal Form, Message Form, and player UI state flow.
-- `entity-expert` — custom entities, AI behavior, components, events, and animation integration.
-- `block-item-expert` — custom blocks, items, recipes, loot tables, interactions, and asset compatibility.
-- `rpg-system-expert` — health, mana, stamina, level, economy, progression, and inventory design.
-- `performance-optimizer` — event optimization, tick budgeting, memory awareness, and watchdog protection.
+### Feature domains
 
-## Repository structure
+- `bedrock-ui-expert` owns forms and interaction flow; it does not own general progression or storage design.
+- `entity-expert` owns entity definitions, behavior, events, spawn setup, animation integration, and entity-specific script concerns.
+- `block-item-expert` owns block/item definitions and their recipe, loot, identifier, and asset links.
+- `rpg-system-expert` owns progression and economy rules, while delegating UI, API verification, and persistence details to their respective focused skills when needed.
+- `dynamic-property-expert` owns persistent data schema, validation, and migration rather than feature-specific gameplay rules.
 
-```text
-Kiako-Skill-MC/
-├── LICENSE
-├── README.md
-├── docs/
-│   ├── architecture.md
-│   ├── bedrock-api-versioning.md
-│   ├── skill-development-guide.md
-│   └── troubleshooting.md
-└── skills/
-    ├── addon-architect/SKILL.md
-    ├── addon-validator/SKILL.md
-    ├── bedrock-api-expert/SKILL.md
-    ├── bedrock-ui-expert/SKILL.md
-    ├── block-item-expert/SKILL.md
-    ├── dynamic-property-expert/SKILL.md
-    ├── entity-expert/SKILL.md
-    ├── javascript-debugger/SKILL.md
-    ├── performance-optimizer/SKILL.md
-    └── rpg-system-expert/SKILL.md
-```
+## Suggested workflow
 
-## Import instructions
+1. Identify the feature and target Minecraft version.
+2. Inspect the existing pack, manifest, identifiers, and data before designing changes.
+3. Use the smallest relevant skill set; combine domain skills only when a task crosses boundaries.
+4. Verify API/module availability before implementation.
+5. Make the smallest practical changes and validate references and schemas.
+6. Test in a copy or test world on the target version; report runtime testing only if it was actually performed.
 
-These skill files follow the `SKILL.md` convention used by AI coding agents that support GitHub-hosted skills.
+## Documentation map
 
-To use them:
+- [Bedrock API versioning](./bedrock-api-versioning.md) explains game, module, and stability versions.
+- [Skill development guide](./skill-development-guide.md) defines how to author and maintain `SKILL.md` files.
+- [Troubleshooting](./troubleshooting.md) gives diagnostic steps for common pack and script failures.
 
-1. Clone or download the repository.
-2. Keep the `skills/` folder structure intact.
-3. Import the required skill directory into the agent or platform that supports skill loading.
-4. If the platform requires a direct URL, point it to the relevant GitHub folder or raw file path for the skill.
-
-Example:
-
-```text
-https://github.com/cisihehe-beep/Kiako-Skill-MC/tree/feature/expand-bedrock-skills/skills
-```
-
-If a platform expects a single skill file, point it directly to the folder file:
-
-```text
-https://github.com/cisihehe-beep/Kiako-Skill-MC/blob/feature/expand-bedrock-skills/skills/bedrock-api-expert/SKILL.md
-```
-
-## Compatibility philosophy
-
-This project is intentionally version-aware rather than version-agnostic.
-
-- We do not assume one Bedrock version behaves like another.
-- We distinguish stable APIs from beta or experimental APIs.
-- We prefer documentation and project evidence over memory or unsupported assumptions.
-- We preserve player data, identifiers, UUIDs, and pack compatibility unless a migration plan is clearly required.
-- We avoid unnecessary dependencies and broad architectural churn.
-
-## Contribution guidelines
-
-1. Keep each skill focused on a specific concern.
-2. Do not duplicate responsibilities across skills.
-3. Always verify API usage against the target Bedrock version.
-4. Preserve existing data and identifiers when modifying a project.
-5. Document assumptions and document version constraints.
-6. Prefer small, practical, maintainable solutions over abstract frameworks.
-7. Do not claim code or gameplay behavior was tested if it was not actually validated.
-8. Update the relevant documentation when adding or changing a skill.
-
-## Documentation index
-
-- [Architecture overview](./docs/architecture.md)
-- [Bedrock API versioning guide](./docs/bedrock-api-versioning.md)
-- [Skill development guide](./docs/skill-development-guide.md)
-- [Troubleshooting guide](./docs/troubleshooting.md)
-
-## Recommended usage
-
-Use the skills by responsibility instead of by generality:
-
-- Use `addon-architect` to plan the feature and system boundaries.
-- Use `addon-validator` before or after a large change to spot manifest and asset issues.
-- Use `bedrock-api-expert` for script API questions and compatibility checks.
-- Use `dynamic-property-expert` for player/world/state persistence design.
-- Use `entity-expert` for custom mobs and AI systems.
-- Use `block-item-expert` for custom blocks, items, and recipe logic.
-- Use `bedrock-ui-expert` for forms and interactive UI flows.
-- Use `rpg-system-expert` for progression and economy systems.
-- Use `performance-optimizer` when runtime or tick performance becomes a risk.
-- Use `javascript-debugger` for runtime errors and debugging logic issues.
-
-## Maintainer notes
-
-This repository is intended to be a practical knowledge source for AI-assisted Bedrock add-on work. It should remain compact, maintainable, and aligned to actual Bedrock capabilities rather than broad, speculative abstractions.
-
----
-
-For more details, see the documentation folder and the individual `SKILL.md` files.
+The repository does not replace official platform documentation. See the [Minecraft Creator documentation](https://learn.microsoft.com/en-us/minecraft/creator/?view=minecraft-bedrock-stable) for authoritative, version-specific references.

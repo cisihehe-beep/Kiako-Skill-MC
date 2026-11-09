@@ -20,4 +20,8 @@ Lakukan audit dengan mengutamakan temuan yang bisa direproduksi dan perbaikan ya
 
 ## Pelaporan
 
-Untuk setiap temuan, sertakan tingkat keparahan, lokasi berkas/baris bila tersedia, alasan, dampak, dan usulan perbaikan minimal. Bedakan error yang terkonfirmasi dari risiko atau hal yang memerlukan pengujian. Akhiri dengan langkah verifikasi pada versi Minecraft target.
+Untuk setiap temuan, sertakan tingkat keparahan, lokasi berkas/baris bila tersedia, alasan, dampak, dan usulan perbaikan minimal. Bedakan error yang terkonfirmasi dari risiko atau hal yang memerlukan pengujian.
+
+## Referensi
+
+Gunakan [panduan versioning](../../docs/bedrock-api-versioning.md) dan referensi resmi [manifest.json](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable) untuk memeriksa properti dan dependency sesuai dokumentasi saat ini. Jangan menyimpulkan dukungan dari contoh versi lain.
